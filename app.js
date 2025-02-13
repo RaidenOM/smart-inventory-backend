@@ -5,6 +5,7 @@ const Product = require("./models/Product");
 const Sale = require("./models/Sale");
 
 mongoose.connect("mongodb://127.0.0.1:27017/smart-inventory");
+app.use(express.json());
 
 // routes for product
 app.get("/products", async (req, res) => {
