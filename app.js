@@ -51,6 +51,27 @@ app.get("/sales/:productId", async (req, res) => {
   res.json({ sale: sale });
 });
 
+app.post("/sales", async (req, res) => {
+  const { productId, quantitySold } = req.body;
+
+  const product = await Product.findById(productId);
+  if (!product) {
+    return res.status(404).json({ error: "Product not fount" });
+  }
+
+  if (product.currentStock < quantitySold) {
+    return res.status(400).json({ error: "Not enough stock" });
+  }
+
+  const sale = new Sale({ productId: productId, quantitySold: quantitySold });
+  await sale.save();
+
+  product.currentStock -= quantitySold;
+  await product.save();
+
+  res.json({ sale, product });
+});
+
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
